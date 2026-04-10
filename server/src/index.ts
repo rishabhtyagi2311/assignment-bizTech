@@ -26,13 +26,9 @@ app.use('/api/seed', seedRoutes);
 // Health Check
 app.get('/health', (req, res) => res.send('Backend is alive! 🚀'));
 
-app.listen(PORT, () => {
-  console.log(`
-  ✅ Server is running on http://localhost:${PORT}
-  📡 Heartbeat Monitor: ACTIVE
-  🛠  System Ready for Seeding
-  `);
-  
-  // Start the background cron job for malfunction detection
+
+
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
   startHeartbeatMonitor();
 });
