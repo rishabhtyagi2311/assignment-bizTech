@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS", 
+    "moduleResolution": "node10",
+    "target": "ES2023",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node"],
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*", "jest.setup.ts"],
+  "exclude": ["node_modules", "dist",
+   
+  ]
+}

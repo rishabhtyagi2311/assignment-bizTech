@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EventType {
+  WORKING
+  IDLE
+  ABSENT
+  PRODUCT_COUNT
+  CAMERA_MALFUNCTION 
+}
+
+model Worker {
+  id           String               @id @default(uuid())
+  worker_id    String               @unique 
+  name         String
+  events       AIEvent[]
+  sessions     WorkstationSession[]
+  createdAt    DateTime             @default(now())
+}
+
+model Workstation {
+  id             String               @id @default(uuid())
+  station_id     String               @unique 
+  name           String               
+  events         AIEvent[]
+  sessions       WorkstationSession[]
+  dailyStats     WorkstationDailyStats[] 
+  createdAt      DateTime             @default(now())
+}
+
+model AIEvent {
+  id             String      @id @default(uuid())
+  timestamp      DateTime    @default(now())
+  event_type     EventType
+  confidence     Float?      
+  count          Int         @default(0) 
+  
+
+  worker         Worker      @relation(fields: [workerId], references: [id])
+  workerId       String
+  workstation    Workstation @relation(fields: [workstationId], references: [id])
+  workstationId  String
+
+  @@index([timestamp])
+  @@index([workerId, timestamp])
+}
+
+// This table is used to calculate the time spent in each state (analytics)
+
+model WorkstationSession {
+  id             String      @id @default(uuid())
+  state          EventType
+  startTime      DateTime
+  endTime        DateTime?
+  durationSec    Int?        // Computed when the session ends
+  
+
+  worker         Worker      @relation(fields: [workerId], references: [id])
+  workerId       String
+  workstation    Workstation @relation(fields: [workstationId], references: [id])
+  workstationId  String
+
+  @@index([startTime, endTime])
+  @@index([state])
+}
+
+
+
+model WorkstationDailyStats {
+  id             String      @id @default(uuid())
+  date           DateTime    
+  total_products Int         @default(0)
+  
+  working_sec    Int         @default(0)
+  idle_sec       Int         @default(0)
+  malfunction_sec Int        @default(0)
+
+
+  workstation    Workstation @relation(fields: [workstationId], references: [id])
+  workstationId  String
+
+ 
+  @@unique([workstationId, date])
+  @@index([date])
+}
