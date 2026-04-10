@@ -20,7 +20,6 @@ import ActionBar from '../components/actionBar';
 import { 
   RefreshCw, 
   ServerOff, 
-  Database, 
   LayoutDashboard, 
   Activity,
   XCircle,
